@@ -14,6 +14,7 @@ namespace ParkingSystem.Api.Controllers
     public class ParkingSlotController : ControllerBase
     {
         // Public Api
+        [HttpPost("UpdateSlotStatus")]
         public ActionResult<bool> UpdateParkingSlotStatus(IParkingSlot parkingSlot)
         {
             //This can query with the Sensor external system and keep the DB up to date 
@@ -24,24 +25,28 @@ namespace ParkingSystem.Api.Controllers
 #region "Private Internal API"
 
         [Authorize]
+        [HttpPost("Create")]
         public ActionResult<IList<IParkingSlot>> CreateParkingSlot()
         {
 
             return Ok();
         }
         [Authorize]
+        [HttpPost("Update")]
         public ActionResult<IParkingSlot> UpdateParkingSlot(IParkingSlot parkingSlots)
         {
 
             return Ok();
         }
         [Authorize]
+        [HttpPost("UpdateMany")]
         public ActionResult<IList<IParkingSlot>> UpdateParkingManySlots(IList<IParkingSlot> parkingSlots)
         {
 
             return Ok();
         }
         [Authorize]
+        [HttpPost("Delete")]
         public ActionResult DeleteParkingSlot(IParkingSlot parkingSlots)
         {
 

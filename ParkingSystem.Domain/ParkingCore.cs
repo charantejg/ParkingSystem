@@ -145,98 +145,21 @@ namespace ParkingSystem.Domain
         /// </summary>
         /// <param name="parkingSlot"></param>
         /// <param name="ticket"></param>
-        public bool Park(IParkingSlot parkingSlot, Ticket ticket)
+        public bool Park(IParkingSlot parkingSlot, ITicket ticket)
         {
             switch (parkingSlot)
             {
                 case MediumSlot slot:
-                    {
-
-                        var freeCompactSlotValue = _compactSlotsAvailable.Values.FirstOrDefault(
-                            x => x.ParkingFloor.FloorId > 0 && x.IsAvailable &&
-                                 x.Reserved == (ticket.VehicleInfo.Type is Employee));
-
-                        if (freeCompactSlotValue == null)
-                            return false;
-
-                        _compactSlotsAvailable.Remove(freeCompactSlotValue.Id);
-                        slot.IsAvailable = false;
-                        slot.TicketNumber = ticket.TicketNumber;
-                        _compactSlotsInUse.Add(slot.Id, slot);
-                        return true;
-
-
-                    }
+                    return AllocateCompactSlot(slot, ticket);
                 case SmallSlot slot:
                     {
-                        if (IsSmallSlotFull())
-                        {
-                            //If full use the queue from Compact slot
-                            var freeCompactSlotValue = _compactSlotsAvailable.Values.FirstOrDefault(
-                                 x=> x.IsAvailable && x.Reserved == (ticket.VehicleInfo.Type is Employee));
-
-                            if (freeCompactSlotValue == null)
-                                return false;
-
-                            _compactSlotsAvailable.Remove(freeCompactSlotValue.Id);
-                            slot.IsAvailable = false;
-                            slot.TicketNumber = ticket.TicketNumber;
-                            _compactSlotsInUse.Add(slot.Id, slot);
-                            slot.IsCompactSlotUsed = true;
-                            return true;
-
-                        }
-
-                        var freeSmallSlotValue = _compactSlotsAvailable.Values.FirstOrDefault(
-                                x => x.IsAvailable &&
-                                     x.Reserved == (ticket.VehicleInfo.Type is Employee));
-
-                        if (freeSmallSlotValue == null)
-                            return false;
-
-                        _compactSlotsAvailable.Remove(freeSmallSlotValue.Id);
-                        slot.IsAvailable = false;
-                        _compactSlotsInUse.Add(slot.Id, slot);
-                        return true;
-
-
+                        if (!IsSmallSlotFull())
+                            return AllocateSmallSlot(slot, ticket);
+                        slot.IsCompactSlotUsed = true;
+                        return AllocateCompactSlot(slot, ticket);
                     }
-
                 case LargeSlot slot:
-                    
-                    var allSlots = _compactSlotsAvailable.Values.ToList().FindAll
-                    (x => x.ParkingFloor.FloorId == 0 && x.IsAvailable &&
-                          x.Reserved == (ticket.VehicleInfo.Type is Employee));
-
-                    var freeSlotRow = from f
-                          in allSlots.GroupBy(d => d.Row)
-
-                                      select new
-                                      {
-                                          count = f.Count(),
-                                          f.First().Row
-
-                                      };
-
-                    var largeConsecutiveRows = freeSlotRow.First(d => d.count >= 4);
-                    var freeSlots = allSlots.
-                      Where(x => x.Row == largeConsecutiveRows.Row).Take(4).ToList();
-                    
-                    if (freeSlots.Count < 4)
-                        return false;
-
-
-                    foreach (var freeSlot in freeSlots)
-                    {
-                        _compactSlotsAvailable.Remove(freeSlot.Id);
-                        freeSlot.IsAvailable = false;
-                        freeSlot.TicketNumber = ticket.TicketNumber;
-                        _compactSlotsInUse.Add(freeSlot.Id, freeSlot);
-
-                    }
-
-                    return true;
-
+                    return AllocateLargeSlot(slot, ticket);
             }
 
             return false;
@@ -275,9 +198,9 @@ namespace ParkingSystem.Domain
             }
 
 
-
-
         }
+
+
 
         /// <summary>
         /// This method checks if both bike(small)  and car (compact) available slots are full or not
@@ -299,15 +222,79 @@ namespace ParkingSystem.Domain
             throw new NotImplementedException();
         }
 
-        int GetNearestParkingSlot(Vehicle vehicle)
+        public int GetNearestParkingSlot(string ticket)
         {
 
             // this logic to be implemented 
             return 1;
 
+        }
 
-            
+        private bool AllocateCompactSlot(IParkingSlot slot, ITicket ticket)
+        {
+            var freeCompactSlotValue = _compactSlotsAvailable.Values.FirstOrDefault(
+                x => x.ParkingFloor.FloorId > 0 && x.IsAvailable &&
+                     x.Reserved == (ticket.Vehicle.Type is Employee));
 
+            if (freeCompactSlotValue == null)
+                return false;
+
+            _compactSlotsAvailable.Remove(freeCompactSlotValue.Id);
+            slot.IsAvailable = false;
+            slot.TicketNumber = ticket.TicketNumber;
+            _compactSlotsInUse.Add(slot.Id, slot);
+            return true;
+        }
+
+        private bool AllocateSmallSlot(IParkingSlot slot, ITicket ticket)
+        {
+            var freeSmallSlotValue = _compactSlotsAvailable.Values.FirstOrDefault(
+                x => x.IsAvailable &&
+                     x.Reserved == (ticket.Vehicle.Type is Employee));
+
+            if (freeSmallSlotValue == null)
+                return false;
+
+            _compactSlotsAvailable.Remove(freeSmallSlotValue.Id);
+            slot.IsAvailable = false;
+            _compactSlotsInUse.Add(slot.Id, slot);
+            return true;
+        }
+
+        private bool AllocateLargeSlot(IParkingSlot slot, ITicket ticket)
+        {
+            var allSlots = _compactSlotsAvailable.Values.ToList().FindAll
+            (x => x.ParkingFloor.FloorId == 0 && x.IsAvailable &&
+                  x.Reserved == (ticket.Vehicle.Type is Employee));
+
+            var freeSlotRow = from f
+                    in allSlots.GroupBy(d => d.Row)
+
+                              select new
+                              {
+                                  count = f.Count(),
+                                  f.First().Row
+
+                              };
+
+            var largeConsecutiveRows = freeSlotRow.First(d => d.count >= 4);
+            var freeSlots = allSlots.
+                Where(x => x.Row == largeConsecutiveRows.Row).Take(4).ToList();
+
+            if (freeSlots.Count < 4)
+                return false;
+
+
+            foreach (var freeSlot in freeSlots)
+            {
+                _compactSlotsAvailable.Remove(freeSlot.Id);
+                freeSlot.IsAvailable = false;
+                freeSlot.TicketNumber = ticket.TicketNumber;
+                _compactSlotsInUse.Add(freeSlot.Id, freeSlot);
+
+            }
+
+            return true;
         }
 
 

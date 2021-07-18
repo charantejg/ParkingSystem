@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AIUtil;
 using ParkingSystem.Domain.Interfaces;
-using ParkingSystem.Entities;
 using ITokenGenerator = ParkingSystem.Domain.Interfaces.ITokenGenerator;
 
 
@@ -21,21 +21,28 @@ namespace ParkingSystem.Domain
            _tokenGenerator = tokenGenerator;
        }
 
-        public Ticket ParkVehicle(Vehicle vehicleInfo)
+        public ITicket ParkVehicle(VehicleInfo vehicleInfo)
         {
             if(_parkingCore.IsParkingFull())
                 throw new Exception("Parking slot is full");
 
             try
             {
-                Ticket.EntryTime = DateTime.Now;
-                Ticket.TicketNumber = _tokenGenerator.GetNewToken();
-                Ticket.VehicleInfo = vehicleInfo;
+               
 
-                ParkingSlot = GetSlotType(vehicleInfo);
-
-                _parkingCore.Park(ParkingSlot, Ticket);
-                  return Ticket;
+                
+                ITicket ticket = new Ticket()
+                {
+                    EntryTime = DateTime.Now,
+                    TicketNumber = _tokenGenerator.GetNewToken(),
+                    RegistrationNumber = vehicleInfo.RegistrationNumber,
+                    Vehicle =  GetVehicleType(vehicleInfo.Model)
+                    
+                };
+                ticket.Vehicle.Type = GetUserType(vehicleInfo.UserType);
+                var parkingSlot = GetSlotType(vehicleInfo.Model);
+                _parkingCore.Park(parkingSlot, ticket);
+                return ticket;
             }
             catch (Exception e)
             {
@@ -46,17 +53,50 @@ namespace ParkingSystem.Domain
         }
 
 
-        public IParkingSlot GetSlotType(Vehicle vehicle)
+        public IParkingSlot GetSlotType(string type)
         {
-            return vehicle switch
+            switch (type)
             {
-                Car or AutoRickshaw => new MediumSlot(1, _parkingCore),
-                MotorCycle => new SmallSlot(1, _parkingCore),
-                Truck => new LargeSlot(4, _parkingCore),
-                _ => new MediumSlot(1, _parkingCore)
-            };
+                case "car":
+                case "AutoRickShaw":
+                    return new MediumSlot(1, _parkingCore);
+                case "Truck":
+                    return new LargeSlot(4, _parkingCore);
+                case "MotorCycle":
+                    return new SmallSlot(1, _parkingCore);
+                default:
+                    return new MediumSlot(1, _parkingCore);
+            }
         }
-       
-       
+
+        public IVehicle GetVehicleType(string vehicleType)
+        {
+            switch (vehicleType)
+            {
+                case "car":
+                    return new Car();
+                case "AutoRickShaw":
+                    return new AutoRickshaw();
+                case "Truck":
+                    return new Truck();
+                case "MotorCycle":
+                    return new MotorCycle();
+                default:
+                    return new Car();
+            }
+        }
+
+        public User GetUserType(string  userType)
+        {
+            
+            switch (userType)
+            {
+                case "Employee":
+                    return new Employee();
+                default:
+                    return new Visitor();
+            }
+        }
+
     }
 }

@@ -10,6 +10,5 @@ namespace ParkingSystem.Domain.Interfaces
     {
         byte TerminalNumber { get; set; }
         
-
     }
 }

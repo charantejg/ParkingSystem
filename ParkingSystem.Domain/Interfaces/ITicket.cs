@@ -10,7 +10,8 @@ namespace ParkingSystem.Domain.Interfaces
     {
          int Id { get; set; }
          string TicketNumber { get; set; }
-         Vehicle VehicleInfo { get; set; }
-         DateTime EntryTime { get; set; }
+         string RegistrationNumber { get; set; }
+         IVehicle Vehicle { get; set; }
+        DateTime EntryTime { get; set; }
     }
 }

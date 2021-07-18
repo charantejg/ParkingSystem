@@ -10,8 +10,7 @@ namespace ParkingSystem.Domain
     public class Terminal: ITerminal
     {
         public byte TerminalNumber { get; set; }
-        public IParkingSlot ParkingSlot { get; set; }
-        public Ticket Ticket { get; set; }
+       
 
     }
 }

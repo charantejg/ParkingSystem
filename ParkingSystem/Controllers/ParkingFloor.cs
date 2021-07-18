@@ -12,18 +12,18 @@ namespace ParkingSystem.Api.Controllers
     [ApiController]
     public class ParkingFloor : ControllerBase
     {
-
+        [HttpPost("Create")]
         public IActionResult CreateFloor()
         {
             return StatusCode(201);
         }
-
+        [HttpPost("Update")]
         public IActionResult UpdateFloor()
         {
             return StatusCode(200);
         }
-
-        public IActionResult Delete()
+        [HttpPost("Delete")]
+        public IActionResult DeleteFloor()
         {
             return Ok(true);
         }
