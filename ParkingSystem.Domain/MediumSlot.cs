@@ -18,7 +18,7 @@ namespace ParkingSystem.Domain
         }
         
 
-        public MediumSlot(int id, int position, int row, byte floor, bool reserved, bool available) : base()
+        public MediumSlot(int id, int position, int row, int floor, bool reserved, bool available) : base()
         {
             Id = id;
             Position = position;

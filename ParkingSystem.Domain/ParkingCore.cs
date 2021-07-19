@@ -14,15 +14,14 @@ namespace ParkingSystem.Domain
         private readonly SortedList<int, IParkingSlot> _compactSlotsAvailable;
         private readonly Dictionary<int, IParkingSlot> _smallSlotsInUse;
         private readonly SortedList<int, IParkingSlot> _smallSlotsAvailable;
-        private readonly ParkingSlot[][] _slotsAvailable;
-
+    
         public ParkingCore()
         {
             _smallSlotsAvailable = new SortedList<int, IParkingSlot>();
             _smallSlotsInUse = new Dictionary<int, IParkingSlot>();
             _compactSlotsInUse = new Dictionary<int, IParkingSlot>();
             _compactSlotsAvailable = new SortedList<int, IParkingSlot>();
-            _slotsAvailable = new ParkingSlot[6][];
+           
             InitializeCompactSlots();
             InitializeSmallSlots();
 
@@ -37,30 +36,35 @@ namespace ParkingSystem.Domain
             //Constant , to be retrieved from DB
             // number of floor and available slots for each floor
 
-            _slotsAvailable[0] = new ParkingSlot[5];
-            _slotsAvailable[1] = new ParkingSlot[10];
-            _slotsAvailable[2] = new ParkingSlot[10];
-            _slotsAvailable[3] = new ParkingSlot[10];
-            _slotsAvailable[4] = new ParkingSlot[10];
-            _slotsAvailable[5] = new ParkingSlot[10];
+            var slotsAvailable = new int[5][];
+            slotsAvailable[0] = new int[5];
+            slotsAvailable[1] = new int[10];
+            slotsAvailable[2] = new int[10];
+            slotsAvailable[3] = new int[10];
+            slotsAvailable[4] = new int[10];
 
 
             //initialize the free slots  - all these logic are for demo purpose
             byte id = 1;
             byte floorCount = 0;
             const byte maxReserve = 2;
-            foreach (var floor in _slotsAvailable)
+            foreach (var floor in slotsAvailable)
             {
                 var startPosition = 1;
                 var row = 1;
-                foreach (var slot in floor)
+                foreach (var item in floor)
                 {
-                    slot.Id = id;
-                    slot.ParkingFloor.FloorId = floorCount;
-                    slot.IsAvailable = true;
-                    slot.Position = startPosition;
-                    slot.Row = row;
-                    slot.NoOfSlots = 1;
+
+                    var slot = new SmallSlot(id, startPosition, row, floorCount, false, true)
+                    {
+                        Id = id,
+                        ParkingFloor = {FloorId = floorCount},
+                        IsAvailable = true,
+                        Position = startPosition,
+                        Row = row,
+                        NoOfSlots = 1
+                    };
+
 
                     if (startPosition <= maxReserve)
                         slot.Reserved = true;
@@ -90,33 +94,37 @@ namespace ParkingSystem.Domain
         {
             //Constant , to be retrieved from DB
             // number of floor and available slots for each floor
-
-            _slotsAvailable[0] = new ParkingSlot[5];
-            _slotsAvailable[1] = new ParkingSlot[10];
-            _slotsAvailable[2] = new ParkingSlot[10];
-            _slotsAvailable[3] = new ParkingSlot[10];
-            _slotsAvailable[4] = new ParkingSlot[10];
-            _slotsAvailable[5] = new ParkingSlot[10];
-
+            var slotsAvailable = new int[5][];
+            slotsAvailable[0] =  new int[5];
+            slotsAvailable[1] = new int[10];
+            slotsAvailable[2] = new int[10];
+            slotsAvailable[3] = new int[10];
+            slotsAvailable[4] = new int[10];
+            
 
             //initialize the free slots  - all these logic are for demo purpose
             var id =  1;
             var floorCount = 0;
             const byte maxReserve = 2;
-            foreach (var floor in _slotsAvailable)
+            foreach (var floor in slotsAvailable)
             {
                 var startPosition = 1;
                 var row = 1;
-                foreach (var slot in floor)
-                {
+               
                     
-                    slot.Id = id;
-                    slot.ParkingFloor.FloorId = floorCount;
-                    slot.IsAvailable = true;
-                    slot.Position = startPosition;
-                    slot.Row = row;
-                    slot.NoOfSlots = 1;
+                foreach (var item in floor)
+                {
 
+                    var slot = new MediumSlot(id, startPosition, row, floorCount, false, true)
+                    {
+                        Id = id,
+                        ParkingFloor = {FloorId = floorCount},
+                        IsAvailable = true,
+                        Position = startPosition,
+                        Row = row,
+                        NoOfSlots = 1
+                    };
+                    
                     if (startPosition <= maxReserve)
                         slot.Reserved = true;
 
@@ -220,7 +228,7 @@ namespace ParkingSystem.Domain
 
         public bool IsLargeSlotFull()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Not implemented");
         }
 
         public int GetNearestParkingSlot(string ticket)

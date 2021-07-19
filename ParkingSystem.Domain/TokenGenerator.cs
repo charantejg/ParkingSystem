@@ -8,7 +8,7 @@ namespace ParkingSystem.Domain
 
         public string GetNewToken()
         {
-            return "ParkTicket" +  new Guid().ToString();
+            return "ParkTicket-" + Guid.NewGuid();
         }
 
 

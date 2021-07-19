@@ -19,7 +19,7 @@ namespace ParkingSystem.Domain
             NumberOfSlots = noOfSlot;
         }
 
-        public SmallSlot(int id, int position, int row, byte floor, bool reserved, bool available) : base()
+        public SmallSlot(int id, int position, int row, int floor, bool reserved, bool available) : base()
         {
             Id = id;
             Position = position;
@@ -33,5 +33,8 @@ namespace ParkingSystem.Domain
 
         }
 
+        public SmallSlot()
+        {
+        }
     }
 }
