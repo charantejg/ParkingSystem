@@ -28,8 +28,12 @@ namespace ParkingSystem.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ParkingSystem", Version = "v1" });
             });
 
-            services.AddTransient<ITerminal, Terminal>();
+            services.AddScoped<IEntry, Entry>();
+            services.AddScoped<IExit, Exit>();
+            services.AddScoped<ITerminal, Terminal>();
             services.AddSingleton<IParkingLot, ParkingLot>();
+            services.AddScoped<IParkingCore, ParkingCore>();
+            services.AddTransient<ITokenGenerator, TokenGenerator>();
 
         }
 

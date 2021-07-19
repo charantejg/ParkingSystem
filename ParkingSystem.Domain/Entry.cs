@@ -10,8 +10,10 @@ using ITokenGenerator = ParkingSystem.Domain.Interfaces.ITokenGenerator;
 
 namespace ParkingSystem.Domain
 {
-   public class Entry: Terminal
+   public class Entry: Terminal, IEntry
     {
+        public int EntryId { get; set; }
+
        private readonly IParkingCore _parkingCore;
        private readonly ITokenGenerator _tokenGenerator;
 
@@ -53,7 +55,7 @@ namespace ParkingSystem.Domain
         }
 
 
-        public IParkingSlot GetSlotType(string type)
+        private IParkingSlot GetSlotType(string type)
         {
             switch (type)
             {
@@ -69,7 +71,7 @@ namespace ParkingSystem.Domain
             }
         }
 
-        public IVehicle GetVehicleType(string vehicleType)
+        private IVehicle GetVehicleType(string vehicleType)
         {
             switch (vehicleType)
             {
@@ -86,7 +88,7 @@ namespace ParkingSystem.Domain
             }
         }
 
-        public User GetUserType(string  userType)
+        private User GetUserType(string  userType)
         {
             
             switch (userType)

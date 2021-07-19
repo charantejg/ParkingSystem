@@ -16,11 +16,13 @@ namespace ParkingSystem.Api.Controllers
     public class TerminalController : ControllerBase
     {
         
-        private readonly ITerminal _terminal;
+        private readonly IEntry _entry;
+        private readonly IExit _exit;
         
-        public TerminalController(ITerminal terminal)
+        public TerminalController(IEntry entry, IExit exit)
         {
-            _terminal = terminal;
+            _entry = entry;
+            _exit = exit;
         }
 
 
@@ -36,9 +38,8 @@ namespace ParkingSystem.Api.Controllers
             try
             {
                 
-                var entry = (Entry)_terminal;
-                
-                var result = entry.ParkVehicle(vehicle);
+
+                var result = _entry.ParkVehicle(vehicle);
                 return Ok(result);
             }
             catch (Exception e)
@@ -54,8 +55,8 @@ namespace ParkingSystem.Api.Controllers
         {
             try
             {
-                var exit = (Exit)_terminal;
-                exit.UnPark(ticket);
+
+                _exit.UnPark(ticket);
                 return Ok(true);
             }
             catch 

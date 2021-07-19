@@ -7,8 +7,9 @@ using ParkingSystem.Domain.Interfaces;
 
 namespace ParkingSystem.Domain
 {
-   public class Exit: Terminal
+   public class Exit: Terminal, IExit
     {
+        public  int ExitId { get; set; }
         public DateTime ExitTime { get; set; }
         private readonly IParkingCore _parkingCore;
         public Exit(IParkingCore parkingCore)

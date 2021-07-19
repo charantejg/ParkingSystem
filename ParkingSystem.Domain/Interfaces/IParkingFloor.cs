@@ -8,7 +8,7 @@ namespace ParkingSystem.Domain.Interfaces
 {
     public interface IParkingFloor
     {
-        byte FloorId { get; set; }
+        int FloorId { get; set; }
         ParkingLot ParkingLot { get; set; }
         int TotalNoOfSmallSlots { get; set; }
         int TotalNoOfMediumSlots { get; set; }

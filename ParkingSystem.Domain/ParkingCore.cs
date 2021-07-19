@@ -22,7 +22,7 @@ namespace ParkingSystem.Domain
             _smallSlotsInUse = new Dictionary<int, IParkingSlot>();
             _compactSlotsInUse = new Dictionary<int, IParkingSlot>();
             _compactSlotsAvailable = new SortedList<int, IParkingSlot>();
-            _slotsAvailable = new ParkingSlot[5][];
+            _slotsAvailable = new ParkingSlot[6][];
             InitializeCompactSlots();
             InitializeSmallSlots();
 
@@ -100,8 +100,8 @@ namespace ParkingSystem.Domain
 
 
             //initialize the free slots  - all these logic are for demo purpose
-            byte id = 1;
-            byte floorCount = 0;
+            var id =  1;
+            var floorCount = 0;
             const byte maxReserve = 2;
             foreach (var floor in _slotsAvailable)
             {
@@ -109,6 +109,7 @@ namespace ParkingSystem.Domain
                 var row = 1;
                 foreach (var slot in floor)
                 {
+                    
                     slot.Id = id;
                     slot.ParkingFloor.FloorId = floorCount;
                     slot.IsAvailable = true;

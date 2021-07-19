@@ -9,7 +9,7 @@ namespace ParkingSystem.Domain
 {
    public class ParkingFloor: IParkingFloor
     {
-        public byte FloorId { get; set; }
+        public int FloorId { get; set; }
         public int Rows { get; set; }
         public ParkingLot ParkingLot { get; set; }
         public int TotalNoOfSmallSlots { get; set; }
